@@ -79,6 +79,126 @@ A screenshot is included in this repository, showcasing the bot’s precision wh
 
 The bot will run until you press the 'q' key.
 
+## How to get best.pt from roboflow?
+To get the `best.pt` model file for YOLOv8 using **Roboflow** for dataset management, follow this detailed step-by-step guide:
+
+---
+
+
+#### Prerequisites
+
+1. **Roboflow Account**  
+   - If you don’t have a Roboflow account, sign up at [Roboflow.com](https://roboflow.com/).
+   - Roboflow simplifies dataset annotation, preparation, and export for use with machine learning models like YOLOv8.
+
+2. **Install YOLOv8 and Other Dependencies**  
+   Install YOLOv8 and its dependencies via the `ultralytics` package:
+   ```bash
+   pip install ultralytics
+   ```
+
+---
+
+### Step 1: Upload and Annotate Your Dataset on Roboflow
+
+1. **Upload Your Dataset**  
+   - Go to the [Roboflow dashboard](https://app.roboflow.com/).
+   - Click on **Create New Project** and choose the type of model you’re building (e.g., "Object Detection").
+   - Upload your images and, if you already have them, upload your annotations. If you don’t have annotations yet, you can label them using Roboflow’s labeling tools.
+
+2. **Annotate (if needed)**  
+   - If your dataset is not annotated, Roboflow provides an interface where you can manually draw bounding boxes around objects in your images and assign classes to them.
+
+3. **Organize Dataset**  
+   After uploading and annotating, Roboflow organizes the dataset into training, validation, and test sets. It automatically splits your dataset (e.g., 70% training, 20% validation, 10% test). You can customize this split as needed.
+
+---
+
+### Step 2: Export Dataset in YOLOv8 Format
+
+1. **Generate Dataset Version**  
+   - After organizing and splitting your dataset, click **Generate** to create a new dataset version.
+   
+2. **Export in YOLOv8 Format**  
+   - Once the dataset is generated, click **Export**.
+   - In the format dropdown, select **YOLOv8 PyTorch**.
+   - Choose the image resolution you prefer (e.g., `640x640`), which is the input size for YOLO.
+   - Download the dataset export link, or copy the download code snippet (useful if you want to download the dataset directly to your training machine).
+
+   You will get a code snippet like this:
+   ```bash
+   !curl -L "https://universe.roboflow.com/dataset-name/download/yolov8" > roboflow.zip; unzip roboflow.zip; rm roboflow.zip
+   ```
+
+---
+
+### Step 3: Download the Dataset for Training
+
+1. **Prepare the Dataset**  
+   - Run the command (shown above) to download the dataset directly to your working directory. This will unzip the dataset into folders with images and corresponding label files in YOLO format.
+
+   The folder structure will look like this:
+   ```
+   dataset/
+   ├── train/
+   │   ├── images/
+   │   └── labels/
+   ├── valid/
+   │   ├── images/
+   │   └── labels/
+   └── data.yaml
+   ```
+
+   The `data.yaml` file, which Roboflow provides, includes:
+   - The number of classes (`nc`).
+   - The paths to the training and validation sets.
+   - The list of class names.
+
+---
+
+### Step 4: Train YOLOv8 Model
+
+1. **Launch YOLOv8 Training**  
+   Now you are ready to train your YOLOv8 model. Use the command below to start training:
+   ```bash
+   yolo task=detect mode=train data=path/to/data.yaml model=yolov8n.pt epochs=100 imgsz=640
+   ```
+   
+   **Explanation of the command:**
+   - `task=detect`: Indicates this is an object detection task.
+   - `mode=train`: Specifies the mode to train the model.
+   - `data=path/to/data.yaml`: Path to the `data.yaml` file in the dataset.
+   - `model=yolov8n.pt`: The base YOLOv8 model to start with (`yolov8n.pt` for YOLOv8 Nano, adjust as needed for small, medium, large models).
+   - `epochs=100`: Number of epochs for training (you can adjust this).
+   - `imgsz=640`: Size of input images (can adjust based on your dataset size).
+
+2. **Training Logs**  
+   As training progresses, you’ll see the model’s performance metrics, such as training/validation losses, mAP (mean average precision), and more, displayed in the console.
+
+---
+
+### Step 5: Retrieve the `best.pt` File
+
+1. **Locate the `best.pt` File**  
+   Upon completion of training, YOLOv8 saves the model checkpoints in the `runs/train/exp/` directory (the folder name might increment if you run multiple experiments like `exp1`, `exp2`, etc.).
+
+   - **`best.pt`**: This is the model checkpoint with the best performance on the validation set during training.
+   - **`last.pt`**: This is the model checkpoint from the final epoch.
+
+   The file will be located here:
+   ```
+   runs/train/exp/best.pt
+   ```
+
+2. **Using `best.pt` for Inference or Fine-Tuning**  
+   Once you have the `best.pt` model, you can use it for inference (detecting objects in new images) or continue fine-tuning. For inference, you can run:
+   ```bash
+   yolo task=detect mode=predict model=runs/train/exp/best.pt source=path/to/image.jpg
+   ```
+
+---
+
+
 ## Important Notice
 
 This project is intended solely for testing and learning purposes. It is not meant for use in a live game environment and should not be deployed in a manner that violates any game's terms of service. This project is meant only for testing YOLOv8.
