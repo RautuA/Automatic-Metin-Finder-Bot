@@ -52,7 +52,7 @@ A screenshot is included in this repository, showcasing the bot’s precision wh
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/metin-finder-bot.git
+   git clone https://github.com/RautuA/Automatic-Metin-Finder-Bot
    cd metin-finder-bot
    ```
 
