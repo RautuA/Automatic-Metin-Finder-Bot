@@ -53,7 +53,7 @@ A screenshot is included in this repository, showcasing the bot’s precision wh
 1. Clone this repository:
    ```bash
    git clone https://github.com/RautuA/Automatic-Metin-Finder-Bot
-   cd metin-finder-bot
+   cd automatic-metin-finder-bot
    ```
 
 2. Create and activate a virtual environment:
